@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.common.Constants;
 import com.demo.dto.DataObject;
-import com.demo.service.DemoService;
+import com.demo.service.IDemoService;
 
 @RestController
 @RequestMapping(Constants.DEMO)
@@ -25,7 +25,7 @@ public class DemoController {
 	private static final Logger log = LoggerFactory.getLogger(DemoController.class);
 	
 	@Autowired
-	private DemoService demoService;
+	private IDemoService demoService;
 	
 	@GetMapping(path = Constants.COUNT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Map<String, Object>> getCount() {
