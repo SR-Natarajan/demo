@@ -16,6 +16,16 @@ import com.demo.common.Constants;
 @ControllerAdvice
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	
+	@ExceptionHandler(ArrayIndexOutOfBoundsException.class)
+    public ResponseEntity<Object> handleArrayIndexOutOfBoundsException(ArrayIndexOutOfBoundsException ex, WebRequest request) {
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put(Constants.TIMESAMP, LocalDateTime.now());
+        body.put(Constants.MESSAGE, Constants.ID_NOT_PRESENT);
+
+        return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+    }
+	
 	@ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(Exception ex, WebRequest request) {
 

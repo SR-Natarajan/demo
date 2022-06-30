@@ -39,14 +39,14 @@ class DemoServiceTest {
 	}
 
 	@Test
-	void getUniqueUserCountTest() throws Exception {
+	void testGetUniqueUserCount() throws Exception {
 		Mockito.when(restTemplate.getForObject(Mockito.<String>any(), Mockito.any())).thenReturn(dObjList);
 		long result = demoService.getUniqueUserCount();
 		assertEquals(2l, result);
 	}
 	
 	@Test
-	void getUpdatedListTest() throws Exception {
+	void testGetUpdatedList() throws Exception {
 		Mockito.when(restTemplate.getForObject(Mockito.<String>any(), Mockito.any())).thenReturn(dObjList);
 		List<DataObject> result = demoService.getUpdatedList();
 		assertEquals(6, result.size());
@@ -54,6 +54,17 @@ class DemoServiceTest {
 		assertEquals("body", result.get(1).getBody());
 		assertEquals("1800Flowers", result.get(3).getTitle());
 		assertEquals("1800Flowers", result.get(3).getBody());
+	}
+	
+	@Test
+	void testUpdatedList() throws Exception {
+		Mockito.when(restTemplate.getForObject(Mockito.<String>any(), Mockito.any())).thenReturn(dObjList);
+		List<DataObject> result = demoService.updateList(new DataObject(3, 3, "1800", "Flowers"));
+		assertEquals(6, result.size());
+		assertEquals("title", result.get(1).getTitle());
+		assertEquals("body", result.get(1).getBody());
+		assertEquals("1800", result.get(2).getTitle());
+		assertEquals("Flowers", result.get(2).getBody());
 	}
 	
 	@Test()

@@ -8,5 +8,6 @@ public interface IDemoService {
 	
 	long getUniqueUserCount();
 	List<DataObject> getUpdatedList();
+	List<DataObject> updateList(DataObject dataObj);
 
 }

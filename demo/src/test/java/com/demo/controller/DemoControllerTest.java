@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -15,14 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.demo.common.Constants;
 import com.demo.dto.DataObject;
 import com.demo.service.DemoService;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -76,10 +80,47 @@ class DemoControllerTest {
 		assertEquals(6, responseList.size());
 	}
 	
+	@Test
+	void testUpdateListSuccess() throws Exception {
+		Mockito.when(demoService.updateList(Mockito.any())).thenReturn(dObjList);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/demo/updateList").accept(MediaType.APPLICATION_JSON)
+				.content(mapToJson(new DataObject(3, 3, "1800", "Flowers"))).contentType(MediaType.APPLICATION_JSON);;
+
+		MvcResult result = mockMvc.perform(requestBuilder).andExpect(status().isOk()).andReturn();
+
+		String responseString = result.getResponse().getContentAsString();
+		assertNotNull(responseString);
+		List<DataObject> responseList = mapFromJsonList(result.getResponse().getContentAsString(),
+				new TypeReference<List<DataObject>>() {
+				});
+		assertEquals(6, responseList.size());
+	}
+	
+	@Test
+	void testUpdateListExceptionMeesage() throws Exception {
+		Mockito.when(demoService.updateList(Mockito.any())).thenThrow(new ArrayIndexOutOfBoundsException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/demo/updateList").accept(MediaType.APPLICATION_JSON)
+				.content(mapToJson(new DataObject(3, 3, "1800", "Flowers"))).contentType(MediaType.APPLICATION_JSON);;
+
+		MvcResult result = mockMvc.perform(requestBuilder).andExpect(status().isNoContent()).andReturn();
+
+		String responseString = result.getResponse().getContentAsString();
+		assertNotNull(responseString);
+		JSONObject response = new JSONObject(responseString);
+		assertEquals("ID not present.", response.get(Constants.MESSAGE));
+	}
+	
 	private <T> List<T> mapFromJsonList(String json, TypeReference<List<T>> clazz)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(json, clazz);
+	}
+	
+	protected String mapToJson(Object obj) throws JsonProcessingException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		return objectMapper.writeValueAsString(obj);
 	}
 
 }

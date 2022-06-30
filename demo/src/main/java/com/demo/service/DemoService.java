@@ -34,4 +34,11 @@ public class DemoService implements IDemoService{
 		return Arrays.asList(dataList);
 	}
 	
+	public List<DataObject> updateList(DataObject dataObj) {
+		DataObject[] dataList = restTemplate.getForObject(feedUrl, DataObject[].class);
+		dataList[dataObj.getId()-1].setTitle(dataObj.getTitle());
+		dataList[dataObj.getId()-1].setBody(dataObj.getBody());
+		return Arrays.asList(dataList);
+	}
+	
 }
